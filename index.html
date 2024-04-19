@@ -1,1 +1,233 @@
-"Hello World" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>食堂点菜系统</title>
+    <!---------->
+</head>
+<body background="picture//背景图片.jpg">
+    <script type="text/javascript" src="jQuery//jQueryFile.js"></script>
+
+    <script type="text/javascript">
+        onload = function () {
+            function f1(){
+                document.getElementById("table2").hidden = true;
+                document.getElementById("table3").hidden = true;
+                $(":checkbox:gt(3)").prop("disabled",true);
+            }
+            f1();
+
+            //多选默认不选中
+            function f2(){
+                $(":checkbox").prop("checked",false);
+                $(".tr1 input").prop("disabled",true);
+            }
+            f2();
+
+            //早餐按钮
+            $("#breakfast").click(
+                function () {
+                    $("table:eq(0)").show();
+                    $("table:gt(0)").hide();
+                    document.getElementById("submit").disabled = true;
+                }
+            )
+
+            //给多选框绑定鼠标单击事件，
+            $(":checkbox").click(
+                function () {
+                    var c = this.checked;
+                    var className = this.className;
+                    className1 = ":text"+"[class = "+className + "]";
+                    className = "."+className +":gt(0)"; 
+
+                    $(className).prop("disabled",!c);
+
+                    if(c==false){
+                        var number = parseInt($(className1).val()); 
+                        var one = parseFloat($(className1).attr("name"));
+                        var money = parseFloat($("#money").text());  
+                        $("#money").text(money - (number*one)); 
+                        $(className1).val("0");
+                    }
+                }
+            )
+
+            //给减框绑定鼠标单击事件
+            $(":button[value = '-']").click(
+                function () {
+                    var className = this.className;
+                    className = "."+className+"[value = '-']";
+                    var value = parseInt($(className).siblings(":text").val());
+                    if(isNaN(value)){ 
+                        value = 0;
+                    }
+                    var number = value - 1;
+                    if(number>=0){
+                        $(className).siblings(":text").val(number);
+                        var money = parseFloat($("#money").text()) - 1*parseFloat($(className).siblings(":text").attr("name"));
+                        $("#money").text(money);
+                    }else{
+                        $(className).siblings(":text").val(0);
+                    }
+
+                }
+            )
+            //给加框绑定鼠标单击事件
+            $(":button[value = '+']").click(
+                function () {
+                    var className = this.className;
+                    className = "."+className+"[value = '+']";
+                    var value = parseInt($(className).siblings(":text").val());
+                    if(isNaN(value)){    
+                        value = 0;
+                    }
+                    var number = value + 1;
+                    if(number>50){    
+                        $(className).siblings(":text").val(50);
+                    }else {
+                        $(className).siblings(":text").val(number);
+                        var c2 = parseFloat($(className).siblings(":text").attr("name"));
+                        var money = parseFloat($("#money").text()) + 1*c2;
+                        $("#money").text(money);
+                    }
+
+                }
+            )
+
+            //金额变化
+            $(":text").bind("input propertychange",function () {
+                var money = 0;
+                $(":text").each(
+                    function (index,obj) {
+                        var value = parseInt(obj.value);
+                        if(isNaN(value)){ 
+                            value = 0;
+                            obj.value = "0";
+                        }
+                        var m = parseFloat(obj.name);
+                        money += value*m;
+                    }
+                );
+                $("#money").text(money);
+            });
+
+            //重置按钮
+            $("#reset").click(
+                function () {
+                    $(":text").val("0"); 
+                    $("#money").text("0"); 
+                    $(":text").prop("disabled",true);
+                    $(":button[value='-'],:button[value='+']").prop("disabled",true); 
+                    $(":checkbox").prop("checked",false); 
+                }
+            );
+            //提交按钮
+            $("#submit").click(
+                function () {
+                    var money = $("#money").text();
+                    var ok = window.confirm("确认提交? 总金额"+money+"元");
+                    if(ok == true){
+                        alert("提交成功！");
+                        $(":text").val("0");   
+                        $("#money").text("0");  
+                        $(":text").prop("disabled",true);  
+                        $(":button[value='-'],:button[value='+']").prop("disabled",true);
+                        $(":checkbox").prop("checked",false); 
+                    }
+                }
+            );
+
+        }
+
+    </script>
+    <center>
+        <h1>点餐系统</h1>
+        <HR width="80%" color="coral">
+    </center>
+    <div id="clock" style="float: right;margin-right: 50px;font-size: 22px"></div><br><br>
+    
+    <center>
+        <table cellpadding="20px" id="table1">
+            <tr>
+                <td>
+                    <img  src="./picture/早餐_肉包.jpg" width="300px" height="300px" title="肉包子" alt="图片加载不出来" >
+                </td>
+                <td>
+                    <img  src="./picture/早餐_肉饺.jpg" width="300px" height="300px" title="肉饺子" alt="图片加载不出来" >
+                </td>
+                <td>
+                    <img  src="./picture/早餐_菜包.jpg" width="300px" height="300px" title="菜包子" alt="图片加载不出来" >
+                </td>
+                <td>
+                    <img  src="./picture/早餐_拼盘.jpg" width="350px" height="320px" title="拼盘" alt="图片加载不出来" >
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <input type="checkbox" style="width: 20px;height: 18px" class="s1" title="点击以选择肉包子">肉包(2元/个)
+                </th>
+                <th>
+                    <input type="checkbox" style="width: 20px;height: 18px" class="s2" title="点击以选择肉饺子">肉饺（0.5元/个）
+                </th>
+                <th>
+                    <input type="checkbox" style="width: 20px;height: 18px" class="s3" title="点击以选择菜包子">菜包（1元/个）
+                </th>
+                <th>
+                    <input type="checkbox" style="width: 20px;height: 18px" class="s4" title="点击以选择拼盘">拼盘（6元/份）
+                </th>
+
+            </tr>
+            <tr class="tr1">
+                <th >
+                    <input type="button" value="-" style="height: 22px;width: 22px" class="s1">
+                    <input type="text" style="height: 18px;width: 14px;font-size: 12px;text-align: center" value="0" class="s1" name="2" oninput="if(value>50)value=50;value=value.replace(/[^\d]/g,'')">
+                    <input type="button" value="+" class="s1">
+                </th>
+                <th class="s2">
+                    <input type="button" value="-" style="height: 22px;width: 22px" class="s2">
+                    <input type="text" style="height: 18px;width: 14px;font-size: 12px;text-align: center" value="0" class="s2" name="0.5" oninput="if(value>50)value=50;value=value.replace(/[^\d]/g,'')">
+                    <input type="button" value="+" class="s2">
+                </th>
+                <th class="s3">
+                    <input type="button" value="-" style="height: 22px;width: 22px" class="s3">
+                    <input type="text" style="height: 18px;width: 14px;font-size: 12px;text-align: center" value="0" class="s3" name="1" oninput="if(value>50)value=50;value=value.replace(/[^\d]/g,'')">
+                    <input type="button" value="+" class="s3">
+                </th>
+                <th class="s4">
+                    <input type="button" value="-" style="height: 22px;width: 22px" class="s4">
+                    <input type="text" style="height: 18px;width: 14px;font-size: 12px;text-align: center" value="0" class="s4" name="6" oninput="if(value>50)value=50;value=value.replace(/[^\d]/g,'')">
+                    <input type="button" value="+" class="s4">
+                </th>
+
+            </tr>
+        </table>
+
+    </center>
+
+    <center>
+        <table cellpadding="20px" id="table2">
+            <tr class="tr2">
+            </tr>
+        </table>
+
+    </center>
+
+    <center>
+        <table cellpadding="20px" id="table3">
+            <tr class="tr3">
+            </tr>
+        </table>
+    </center>
+    <br>
+    <h2 style="float: left;margin-left: 80px">金额：</h2><br>
+    <div style="font-size: 22px" id="money">0</div>
+    <br><br>
+
+    <center>
+        <input type="button" value="提交" style="width: 70px;height: 30px" id="submit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="重置" style="width: 70px;height: 30px" id="reset">
+    </center>
+
+</body>
+</html>
